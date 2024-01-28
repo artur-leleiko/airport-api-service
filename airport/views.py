@@ -1,3 +1,52 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from airport.models import (
+    AirplaneType,
+    Airplane,
+    Airport,
+    Route,
+    Crew,
+    Flight
+)
+from airport.serializers import (
+    AirplaneTypeSerializer,
+    AirplaneSerializer,
+    AirportSerializer,
+    RouteSerializer,
+    CrewSerializer,
+    FlightSerializer
+)
+
+
+class AirplaneTypeViewSet(viewsets.ModelViewSet):
+    queryset = AirplaneType.objects.all()
+    serializer_class = AirplaneTypeSerializer
+
+
+class AirplaneViewSet(viewsets.ModelViewSet):
+    queryset = Airplane.objects.select_related("airplane_type")
+    serializer_class = AirplaneSerializer
+
+
+class AirportViewSet(viewsets.ModelViewSet):
+    queryset = Airport.objects.all()
+    serializer_class = AirportSerializer
+
+
+class RouteViewSet(viewsets.ModelViewSet):
+    queryset = Route.objects.select_related("source", "destination")
+    serializer_class = RouteSerializer
+
+
+class CrewViewSet(viewsets.ModelViewSet):
+    queryset = Crew.objects.all()
+    serializer_class = CrewSerializer
+
+
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Flight.objects
+        .select_related("route", "airplane")
+        .prefetch_related("crew")
+    )
+    serializer_class = FlightSerializer
