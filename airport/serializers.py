@@ -76,6 +76,7 @@ class FlightListSerializer(FlightSerializer):
     crew = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="full_name"
     )
+    tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Flight
@@ -87,7 +88,8 @@ class FlightListSerializer(FlightSerializer):
             "airplane_capacity",
             "crew",
             "departure_time",
-            "arrival_time"
+            "arrival_time",
+            "tickets_available"
         )
 
 
