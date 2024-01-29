@@ -16,7 +16,9 @@ from airport.serializers import (
     RouteListSerializer,
     RouteDetailSerializer,
     CrewSerializer,
-    FlightSerializer
+    FlightSerializer,
+    FlightListSerializer,
+    FlightDetailSerializer
 )
 
 
@@ -61,3 +63,12 @@ class FlightViewSet(viewsets.ModelViewSet):
         .prefetch_related("crew")
     )
     serializer_class = FlightSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+
+        if self.action == "retrieve":
+            return FlightDetailSerializer
+
+        return FlightSerializer
