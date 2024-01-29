@@ -40,6 +40,16 @@ class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
 
+    def get_queryset(self) -> QuerySet:
+        queryset = self.queryset
+
+        city = self.request.query_params.get("city")
+
+        if city:
+            queryset = queryset.filter(closest_big_city__icontains=city)
+
+        return queryset
+
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.select_related("source", "destination")
