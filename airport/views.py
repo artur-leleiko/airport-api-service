@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets
 
@@ -101,6 +103,29 @@ class FlightViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = FlightSerializer
+
+    def get_queryset(self) -> QuerySet:
+        queryset = self.queryset
+
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        departure_date = self.request.query_params.get("departure_time")
+
+        if source:
+            queryset = queryset.filter(
+                route__source__closest_big_city__icontains=source
+            )
+
+        if destination:
+            queryset = queryset.filter(
+                route__destination__closest_big_city__icontains=destination
+            )
+
+        if departure_date:
+            departure_date = datetime.strptime(departure_date, "%Y-%m-%d").date()
+            queryset = queryset.filter(departure_time__date=departure_date)
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
