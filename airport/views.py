@@ -1,4 +1,4 @@
-from django.db.models import F, Count
+from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets
 
 from airport.models import (
@@ -7,7 +7,8 @@ from airport.models import (
     Airport,
     Route,
     Crew,
-    Flight
+    Flight,
+    Order
 )
 from airport.serializers import (
     AirplaneTypeSerializer,
@@ -19,7 +20,9 @@ from airport.serializers import (
     CrewSerializer,
     FlightSerializer,
     FlightListSerializer,
-    FlightDetailSerializer
+    FlightDetailSerializer,
+    OrderSerializer,
+    OrderListSerializer
 )
 
 
@@ -79,3 +82,22 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightDetailSerializer
 
         return FlightSerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.prefetch_related(
+        "tickets__flight__route", "tickets__flight__airplane"
+    )
+    serializer_class = OrderSerializer
+
+    def get_queryset(self) -> QuerySet:
+        return Order.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+
+        return OrderSerializer
+
+    def perform_create(self, serializer) -> None:
+        serializer.save(user=self.request.user)
