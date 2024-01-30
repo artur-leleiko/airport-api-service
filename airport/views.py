@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from airport.models import (
     AirplaneType,
@@ -142,6 +143,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         "tickets__flight__route", "tickets__flight__airplane"
     )
     serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self) -> QuerySet:
         return Order.objects.filter(user=self.request.user)
