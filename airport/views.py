@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db.models import F, Count, QuerySet
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
@@ -67,6 +69,19 @@ class AirportViewSet(
 
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "city",
+                description="Filter by closest_big_city (ex. ?city=Paris)",
+                required=False,
+                type=str,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class RouteViewSet(
     mixins.ListModelMixin,
@@ -103,6 +118,25 @@ class RouteViewSet(
             return RouteDetailSerializer
 
         return RouteSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                description="Filter by source (ex. ?source=Paris)",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                "destination",
+                description="Filter by destination (ex. ?destination=London)",
+                required=False,
+                type=str,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class CrewViewSet(
@@ -159,6 +193,35 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightDetailSerializer
 
         return FlightSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                description="Filter by source (ex. ?source=Paris)",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                "destination",
+                description="Filter by destination (ex. ?destination=London)",
+                required=False,
+                type=str,
+            ),
+            OpenApiParameter(
+                "departure_time",
+                description=(
+                        "Filter by departure_time "
+                        "(ex. ?departure_time=2024-10-08)"
+                ),
+                required=False,
+                type=OpenApiTypes.DATE,
+                location=OpenApiParameter.QUERY,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderViewSet(
