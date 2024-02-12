@@ -180,7 +180,9 @@ class FlightViewSet(viewsets.ModelViewSet):
             )
 
         if departure_date:
-            departure_date = datetime.strptime(departure_date, "%Y-%m-%d").date()
+            departure_date = (
+                datetime.strptime(departure_date, "%Y-%m-%d").date()
+            )
             queryset = queryset.filter(departure_time__date=departure_date)
 
         return queryset

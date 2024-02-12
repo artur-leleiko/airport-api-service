@@ -8,6 +8,9 @@ django-debug-toolbar==4.2.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 drf-spectacular==0.27.1
+flake8-quotes==3.3.1
+flake8-variables-names==0.0.5
+flake8==5.0.4
 inflection==0.5.1
 jsonschema==4.21.1
 jsonschema-specifications==2023.12.1
